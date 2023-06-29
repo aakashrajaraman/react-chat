@@ -53,9 +53,10 @@ function SignIn () {
 
 function ChatRoom () {
   const messageRef = firestore.collection('messages');
-  const query = messageRef.orderBy('created-at').limit(25);
+  const query = messageRef.orderBy('createdAt').limit(25);
   const [formValue, setFormValue] = useState(''); 
   const [messages] = useCollectionData(query, { idField: 'id' });
+  const dummy = useRef();
   const sendMessage = async(e) => {
     e.preventDefault();
     const {uid, photoURL} = auth.currentUser;
@@ -66,6 +67,7 @@ function ChatRoom () {
       photoURL
     })
     setFormValue('');
+    dummy.current.scrollIntoView({behavior: 'smooth'});
   }
   
 
@@ -73,10 +75,11 @@ function ChatRoom () {
     <>
       <div>
         {messages && messages.map(msg => <ChatMessage key={msg.id} message={msg}/>)}
+        <div ref = {dummy}></div>
       </div>
 <form onSubmit={sendMessage}>
-  <input/>
-  <button value = {formValue} onChange = {(e)=>setFormValue(e.target.value)}  >Send Message</button>
+  <input value = {formValue} onChange = {(e)=>setFormValue(e.target.value)}/>
+  <button  type = "submit" >Send Message</button>
 </form>
      
     </>
@@ -97,6 +100,7 @@ function ChatMessage (props) {
   return (
     <>
     <div className={`message ${messageClass}`}>
+      
       <p>{text}</p>
       </div>
       
